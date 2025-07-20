@@ -11,14 +11,13 @@ class Controller:
         self.lastPaused = time()
 
     def update(self):
-        if not self.Music.appleMusicIsOpen():
-            print("Apple music is not opened")
-            print("This only works with songs on your library!")
-            self.Presence.clear()
-            return
-
-
         try:
+            if not self.Music.appleMusicIsOpen():
+                print("Apple music is not opened")
+                print("This only works with songs on your library!")
+                self.Presence.clear()
+                return
+
             position = floor(float(self.Music.getSongPosition()))
             length = floor(float(self.Music.getTrackLength()))
             current = int(time())
@@ -30,9 +29,11 @@ class Controller:
             if (state == "paused" and self.isPaused == False):
                 self.lastPaused = current
                 self.isPaused = True
+            elif (state == "playing" and self.isPaused == True):
+                self.isPaused = False
 
             timeSincePause = current - self.lastPaused
-            if (timeSincePause > 15):
+            if (timeSincePause > 15 and self.isPaused == True):
                 print("presence has been cleared")
                 self.Presence.pause()
                 return
@@ -48,7 +49,6 @@ class Controller:
                     },
                 })
             elif state == "playing":
-                self.isPaused = False
                 self.Presence.set({
                     "name": self.Music.getArtist(),
                     "type": 2,
