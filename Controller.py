@@ -3,6 +3,7 @@ from Music import AppleMusicWrapper
 from time import sleep as s
 from time import time
 from math import floor
+
 class Controller:
     def __init__(self, client):
         self.Presence = DiscordRpc(client)

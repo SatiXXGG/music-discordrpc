@@ -1,7 +1,5 @@
 
 from discordrp import Presence
-from time import sleep as s
-from time import time
 class DiscordRpc:
     def __init__(self, client):
         self.client = client
