@@ -13,9 +13,8 @@ class Controller:
     def update(self):
         try:
             if not self.Music.appleMusicIsOpen():
-                print("Apple music is not opened")
-                print("This only works with songs on your library!")
                 self.Presence.clear()
+                print("cleared presence")
                 return
 
             position = floor(float(self.Music.getSongPosition()))
@@ -64,6 +63,7 @@ class Controller:
                 })
 
         except:
+            self.Presence.pause()
             print("Error updating presence safely ignore if you're not using a music player")
 
     def start(self):
