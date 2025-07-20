@@ -25,9 +25,11 @@ class Controller:
             currentSong = self.Music.getSong()
 
             if (currentSong != self.lastSong):
-                self.cachedImage = self.Music.getImage()
+                self.cachedImage = self.Music.getAlbumCover()
                 self.cachedAlbum = self.Music.getTrackAlbum()
                 self.cachedArtist = self.Music.getArtist()
+
+            self.lastSong = currentSong
 
             position = floor(float(self.Music.getSongPosition()))
             length = floor(float(self.Music.getTrackLength()))
@@ -72,7 +74,6 @@ class Controller:
                     },
                 })
 
-            self.lastSong = currentSong
         except:
             self.Presence.pause()
             print("Error updating presence safely ignore if you're not using a music player")
