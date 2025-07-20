@@ -11,5 +11,5 @@ class DiscordRpc:
         self.presence.update()
     def set(self, info):
         self.presence.set(info)
-    def clear(self):
+    def pause(self):
         self.presence.clear()

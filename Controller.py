@@ -24,6 +24,8 @@ class Controller:
             start = current - position
             end = start + length
 
+
+
             self.Presence.set({
                 "name": self.Music.getArtist(),
                 "type": 2,
@@ -37,14 +39,19 @@ class Controller:
                     "end": end
                 },
             })
+
+            self.lastSong = self.Music.getSong()
         except:
             print("Error updating presence safely ignore if you're not using a music player")
 
     def start(self):
         try:
             while True:
-                self.update()
-                s(5)
-        except KeyboardInterrupt:
-            print("Ended")
+                if (self.lastSong != self.Music.getSong()):
+                    self.update()
+                    s(1)
+                else:
+                    self.update()
+                    s(5)
+        except:
             pass
