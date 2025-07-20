@@ -41,13 +41,6 @@ class AppleMusicWrapper:
             return sp.check_output(['osascript', '-e', f'tell application "{self.appName}" to get player position']).decode('utf-8')
         except:
             return 0
-    def getInfo(self):
-        return {
-            "album": self.getTrackAlbum(),
-            "song": self.getSong(),
-            "art": self.getImage(),
-            "artist": self.getArtist()
-        }
     def getAlbumCover(self):
         query = f"{self.getSong()} {self.getArtist()}"
         url = f"https://itunes.apple.com/search?term={query}&entity=song&limit=1"

@@ -6,9 +6,6 @@ class DiscordRpc:
     def __init__(self, client):
         self.client = client
         self.presence = Presence(client)
-
-    def _update(self):
-        self.presence.update()
     def set(self, info):
         self.presence.set(info)
     def pause(self):
