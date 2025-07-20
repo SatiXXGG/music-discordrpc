@@ -9,6 +9,10 @@ class Controller:
         self.Music = AppleMusicWrapper()
         self.isPaused = True
         self.lastPaused = time()
+        self.lastSong = ""
+        self.cachedImage = ""
+        self.cachedAlbum = ""
+        self.cachedArtist = ""
 
     def update(self):
         try:
@@ -16,45 +20,48 @@ class Controller:
                 self.Presence.clear()
                 print("cleared presence")
                 return
+            currentSong = self.Music.getSong()
+
+            if (currentSong != self.lastSong):
+                self.cachedImage = self.Music.getImage()
+                self.cachedAlbum = self.Music.getTrackAlbum()
+                self.cachedArtist = self.Music.getArtist()
 
             position = floor(float(self.Music.getSongPosition()))
             length = floor(float(self.Music.getTrackLength()))
             current = int(time())
             start = current - position
             end = start + length
-
             state = self.Music.getSongState().strip()
-
+            timeSincePause = current - self.lastPaused
             if (state == "paused" and self.isPaused == False):
                 self.lastPaused = current
                 self.isPaused = True
             elif (state == "playing" and self.isPaused == True):
                 self.isPaused = False
 
-            timeSincePause = current - self.lastPaused
             if (timeSincePause > 15 and self.isPaused == True):
-                print("presence has been cleared")
                 self.Presence.pause()
                 return
 
             if (state == "paused"):
                 self.Presence.set({
-                    "name": self.Music.getArtist(),
+                    "name": self.cachedArtist,
                     "type": 2,
-                    "details": self.Music.getSong(),
-                    "state": f"Paused - {self.Music.getTrackAlbum()}",
+                    "details": currentSong,
+                    "state": f"Paused - {self.cachedAlbum}",
                     "assets": {
-                        "large_image": self.Music.getAlbumCover(),
+                        "large_image": self.cachedImage,
                     },
                 })
             elif state == "playing":
                 self.Presence.set({
-                    "name": self.Music.getArtist(),
+                    "name": self.cachedArtist,
                     "type": 2,
-                    "details": self.Music.getSong(),
-                    "state": self.Music.getTrackAlbum(),
+                    "details": currentSong,
+                    "state": self.cachedAlbum,
                     "assets": {
-                        "large_image": self.Music.getAlbumCover(),
+                        "large_image": self.cachedImage,
                     },
                     "timestamps": {
                         "start": start,
@@ -62,6 +69,7 @@ class Controller:
                     },
                 })
 
+            self.lastSong = currentSong
         except:
             self.Presence.pause()
             print("Error updating presence safely ignore if you're not using a music player")
