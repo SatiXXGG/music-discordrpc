@@ -1,5 +1,6 @@
 
 from discordrp import Presence
+
 class DiscordRpc:
     def __init__(self, client):
         self.client = client

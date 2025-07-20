@@ -61,5 +61,3 @@ class AppleMusicWrapper:
             return result.strip().decode('utf-8') == 'true'
         except:
             return False
-    def init():
-        pass

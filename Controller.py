@@ -21,6 +21,7 @@ class Controller:
                 self.Presence.clear()
                 print("cleared presence")
                 return
+
             currentSong = self.Music.getSong()
 
             if (currentSong != self.lastSong):
@@ -35,6 +36,7 @@ class Controller:
             end = start + length
             state = self.Music.getSongState().strip()
             timeSincePause = current - self.lastPaused
+
             if (state == "paused" and self.isPaused == False):
                 self.lastPaused = current
                 self.isPaused = True
