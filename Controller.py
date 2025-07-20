@@ -70,7 +70,7 @@ class Controller:
         try:
             while True:
                 self.update()
-                s(1)
+                s(8)
 
         except:
             pass
