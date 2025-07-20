@@ -7,7 +7,8 @@ class Controller:
     def __init__(self, client):
         self.Presence = DiscordRpc(client)
         self.Music = AppleMusicWrapper()
-        self.lastSong = ""
+        self.isPaused = True
+        self.lastPaused = time()
 
     def update(self):
         if not self.Music.appleMusicIsOpen():
@@ -24,34 +25,52 @@ class Controller:
             start = current - position
             end = start + length
 
+            state = self.Music.getSongState().strip()
 
+            if (state == "paused" and self.isPaused == False):
+                self.lastPaused = current
+                self.isPaused = True
 
-            self.Presence.set({
-                "name": self.Music.getArtist(),
-                "type": 2,
-                "details": self.Music.getSong(),
-                "state": self.Music.getTrackAlbum(),
-                "assets": {
-                    "large_image": self.Music.getAlbumCover(),
-                },
-                "timestamps": {
-                    "start": start,
-                    "end": end
-                },
-            })
+            timeSincePause = current - self.lastPaused
+            if (timeSincePause > 15):
+                print("presence has been cleared")
+                self.Presence.pause()
+                return
 
-            self.lastSong = self.Music.getSong()
+            if (state == "paused"):
+                self.Presence.set({
+                    "name": self.Music.getArtist(),
+                    "type": 2,
+                    "details": self.Music.getSong(),
+                    "state": f"Paused - {self.Music.getTrackAlbum()}",
+                    "assets": {
+                        "large_image": self.Music.getAlbumCover(),
+                    },
+                })
+            elif state == "playing":
+                self.isPaused = False
+                self.Presence.set({
+                    "name": self.Music.getArtist(),
+                    "type": 2,
+                    "details": self.Music.getSong(),
+                    "state": self.Music.getTrackAlbum(),
+                    "assets": {
+                        "large_image": self.Music.getAlbumCover(),
+                    },
+                    "timestamps": {
+                        "start": start,
+                        "end": end
+                    },
+                })
+
         except:
             print("Error updating presence safely ignore if you're not using a music player")
 
     def start(self):
         try:
             while True:
-                if (self.lastSong != self.Music.getSong()):
-                    self.update()
-                    s(1)
-                else:
-                    self.update()
-                    s(5)
+                self.update()
+                s(1)
+
         except:
             pass
